@@ -29,16 +29,28 @@ As developers we want to build this application for young artists no different f
 
 ### Endpoints
 
-GET /art/{id}\
-GET /user/{id}\
-GET /gallery/{id}\
-POST /user/{id}\
-POST /art/{id}\
-POST /gallery/{id}\
-POST /comment/{id}\
-DELETE /user/{id}\
-DELETE /art/{id}\
-DELETE /gallery/{id}
+* GET /art/{id}
+    * Gets information about specified artwork.
+* GET /user/{id}
+    * Gets information about specified user.
+* GET /gallery/{id}
+    * Gets information about specified gallery.
+* POST /user
+    * Attempts to add a new user with the given form information.
+* POST /art
+    * Adds a new artwork with the given form information.
+* POST /gallery
+    * Creates a new gallery with a given name.
+* POST /comment
+    * Creates a new comment with the given information.
+* DELETE /user/{id}
+    * Deletes the specified user.
+* DELETE /art/{id}
+    * Deletes the specified artwork.
+* DELETE /gallery/{id}
+    * Deletes the specified gallery.
+* DELETE /comment/{id}
+    * Deletes the specified comment.
 
 ### Database Schemas
 
