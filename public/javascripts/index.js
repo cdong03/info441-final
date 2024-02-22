@@ -14,23 +14,40 @@
   }
 
   function uploadArt() {
-    if (userID === undefined) {
-      id('sell-form').reset();
-      activateModal('Error', 'No user currently detected, please login first!');
-    } else {
-      let params = new FormData(id('upload_art'));
-      params.append('username', userID);
-      fetch('/arts/post', {method: 'POST', body: params})
-        .then(statusCheck)
-        .then(res => res.text())
-        .then((res) => {
-          // display res data on the website
-        })
-        .catch(handleError);
-    }
+    let params = new FormData(id('upload_art'));
+    params.append('username', userID);
+    fetch('/arts/post', {method: 'POST', body: params})
+      .then(statusCheck)
+      .then(res => res.json())
+      .then((res) => {
+        id('display').innerHTML = '';
+        for (let i = 0; i < res.length; i++) {
+          id('display').appendChild(genArt(res.cars[i]));
+        }
+      })
+      .catch(handleError);
   }
 
-  //
+  /**
+   * Generates an art post.
+   * @param {Promise} info - Art information.
+   * @returns {Object} - The displayed art.
+   */
+  function genArt(info) {
+    let art = gen('div');
+    art.classList.add('art');
+    let title = gen('h2');
+    title.textContent = info.title;
+    art.appendChild(heading);
+    let user = gen('p');
+    user.textContent = info.username;
+    art.appendChild(user);
+    let img = gen('img');
+    img.src = info.imgUrl;
+    img.alt = info.alt;
+    art.appendChild(img);
+    return art;
+  }
 
   /**
    * Shows an error message.
