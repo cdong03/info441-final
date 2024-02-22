@@ -1,13 +1,24 @@
 <html>
 
 <head>
-  <title>Express</title>
+  <title>UW Art</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
+  <script src="javascripts/index.js"></script>
 </head>
 
 <body>
-  <h1>Express</h1>
-  <p>Welcome to Express</p>
+  <button>Login</button>
+  <h1>UW Art</h1>
+  <form id="upload_art">
+    <label for="art_title">Title: </label>
+    <input name="art_title" id="art_title" maxlength="20" pattern="[a-zA-Z0-9]+" required>
+    <label for="art_url">Art URL: </label>
+    <input name="art_url" id="art_url" required>
+    <label for="art_alt">Alt text: </label>
+    <input name="art_alt" id="art_alt" pattern="[a-zA-Z0-9]+" required>
+    <button>Post</button>
+  </form>
+  <div id="display">Posts go here</div>
 </body>
 
 </html>
