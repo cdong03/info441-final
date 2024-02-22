@@ -46,7 +46,21 @@
     img.src = info.imgUrl;
     img.alt = info.alt;
     art.appendChild(img);
+    let commentBtn = gen('button');
+    commentBtn.textContent = 'Show/hide comments';
+    commentBtn.addEventListener('click', () => {
+      toggleComments(info.id);
+    });
+    art.appendChild(commentBtn);
     return art;
+  }
+
+  /**
+   * Shows/hides comments for the given art.
+   * @param {string} artID - ID of the given artwork.
+   */
+  function toggleComments(artID) {
+    // Need to review how they did this in websharer
   }
 
   /**

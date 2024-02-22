@@ -2,8 +2,6 @@ import express from 'express';
 
 var router = express.Router();
 
-import getURLPreview from '../utils/urlPreviews.js';
-
 // TO-DO:
 // Add 'create gallery' form to HTML
 // Add endpoint to add/remove users from gallery
