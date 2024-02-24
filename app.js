@@ -2,6 +2,8 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+import sessions from 'express-session';
+//import msIdExpress from 'microsoft-identity-express'
 
 // To install msal-node-wrapper, run:
 //     npm install https://gitpkg.now.sh/kylethayer/ms-identity-javascript-nodejs-tutorial-msal-node-v2-/Common/msal-node-wrapper?main
@@ -65,7 +67,6 @@ app.use((req, res, next) =>{
 	next();
 })
 
-app.use('/api/v1', apiv1Router);
 
 app.get(
 	'/signin',
@@ -85,11 +86,18 @@ app.get(
 	}
 );
 
+app.use((req, res, next) => {
+    req.models = models
+    next()
+})
+
 /**
  * This error handler is needed to catch interaction_required errors thrown by MSAL.
  * Make sure to add it to your middleware chain after all your routers, but before any other
  * error handlers.
  */
 app.use(authProvider.interactionErrorHandler());
+
+app.use('/api/v1', apiv1Router);
 
 export default app;

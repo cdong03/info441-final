@@ -2,27 +2,41 @@
 
 <head>
   <title>UW Art</title>
-  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="stylesheets/style.css">
   <script src="javascripts/index.js"></script>
 </head>
 
 <body>
-  <button>Login</button>
-  <h1>UW Art</h1>
+  <div id="header_container">
+    <button id="login-button">Login</button>
+    <h1>UW Art</h1>
+  </div>
+  <div id="header_line"></div>
   <form id="upload_art">
+    <h3>Upload Art</h3>
     <label for="art_title">Title: </label>
     <input name="art_title" id="art_title" maxlength="20" pattern="[a-zA-Z0-9]+" required>
+    <br><br>
     <label for="art_url">Art URL: </label>
-    <input name="art_url" id="art_url" required>
+    <input name="art_url" id="art_url" required oninput="previewURL()">
+
+    <label for="art_file">OR Choose Image: </label>
+    <input type="file" accept="image/*" id="art_file" onchange="previewFile()"><br><br>
+
+    <img id="art_preview" src="" alt="Art Preview" style="display: none">
+
     <label for="art_alt">Alt text: </label>
     <input name="art_alt" id="art_alt" pattern="[a-zA-Z0-9]+" required>
     <button>Post</button>
+    <div id="header_line"></div>
   </form>
   <form id="create_gallery">
-    <label for="gallery_title">Title: </label>
+    <h3>Galleries</h3>
+    <label for="gallery_title">Gallery Title: </label>
     <input name="gallery_title" id="gallery_title" maxlength="20" pattern="[a-zA-Z0-9]+" required>
     <button>Create</button>
   </form>
+  <div id="header_line"></div>
   <div id="display">Posts go here</div>
 </body>
 

@@ -1,11 +1,57 @@
+
+//show preview of the art when user enters a url for their art.
+function previewURL() {
+  var urlInput = document.getElementById("art_url").value;
+  var preview = document.getElementById("art_preview");
+  var fileInput = document.getElementById("art_file");
+
+  //clear the file input value when a url is entered (users can only pick one or the other)
+  if (urlInput && urlInput.trim() !== "") {
+    fileInput.value = "";
+  }
+
+  preview.src = urlInput;
+  preview.style.display = "block";
+}
+
+//show preview of the art when a user chooses a local file of their art
+function previewFile() {
+  var fileInput = document.getElementById('art_file');
+  var artPreview = document.getElementById('art_preview');
+  var urlInput = document.getElementById("art_url");
+
+  //clear the url input when a user has a file selected (users can only pick one or the other)
+  if (fileInput.files && fileInput.files[0]) {
+    urlInput.value = "";
+  }
+
+  if (fileInput.files && fileInput.files[0]) {
+     var reader = new FileReader();
+     reader.onload = function(e) {
+     artPreview.src = e.target.result;
+     artPreview.style.display = 'block';
+     }
+     reader.readAsDataURL(fileInput.files[0]);
+
+  } else {
+    artPreview.src = ""; 
+    artPreview.style.display = 'none';
+  }
+}
+
 "use strict";
 (function() {
+
+  
 
   window.addEventListener("load", init);
 
   /**
    * Sets up event listeners for website's buttons.
    */
+
+  
+
   function init() {
     id('upload_art').addEventListener('submit', (evt) => {
       evt.preventDefault();
