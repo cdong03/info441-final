@@ -9,8 +9,8 @@ router.post('/like', async (req, res) => {
 			let findArt = await req.models.Art.findOne({'_id': req.body.artID});
 			if (!findArt.likes.includes(username)) {
 				findArt.likes.push(username);
+				await findArt.save();
 			}
-			await findArt.save();
 			res.send({'status': 'success'});
 		} else {
 			res.status(401).json({status: 'error', error: 'not logged in'})
@@ -65,7 +65,7 @@ router.post('/', async (req, res) => {
 			const Art = new req.models.Art({
 				imgUrl: req.body.art_url,
 				title: req.body.art_title,
-        alt: req.body.art_alt,
+        		alt: req.body.art_alt,
 				username: req.session.account.username,
 				created_date: Date.now()
 			});

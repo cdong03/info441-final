@@ -38,8 +38,28 @@ function previewFile() {
   }
 }
 
-"use strict";
-(function() {
+async function likePost(artID){
+  await fetchJSON(`api/${apiVersion}/arts/like`, {
+      method: "POST",
+      body: {artID: artID}
+  })
+  loadArts();
+}
+
+
+async function unlikePost(artID){
+  await fetchJSON(`api/${apiVersion}/arts/unlike`, {
+      method: "POST",
+      body: {artID: artID}
+  })
+  loadArts();
+}
+
+
+
+
+//"use strict";
+//(function() {
 
   window.addEventListener("load", init);
 
@@ -71,6 +91,7 @@ function previewFile() {
           //art_file: artFile
         }
       })
+    loadArts();
   }
 
   async function loadArts(){
@@ -93,13 +114,12 @@ function previewFile() {
                     </span>
                 </div>
                 <br>
-                <button onclick='toggleComments("${postInfo.id}")'>View/Hide comments</button>
-                <div id='comments-box-${postInfo.id}' class="comments-box d-none">
-                    <button onclick='refreshComments("${postInfo.id}")')>refresh comments</button>
+                    <button onclick='refreshComments("${postInfo.id}")')>Show comments</button>
                     <div id='comments-${postInfo.id}'></div>
                     <div class="new-comment-box ${myIdentity? "": "d-none"}">
-                        New Comment:
-                        <textarea type="textbox" id="new-comment-${postInfo.id}"></textarea>
+                    <br></br>
+                    <div class="new-comment-line">New Comment: </div>
+                        <textarea type="textbox" id="new-comment-${postInfo.id}"></textarea> 
                         <button onclick='postComment("${postInfo.id}")'>Post Comment</button>
                     </div>
                 </div>
@@ -108,6 +128,59 @@ function previewFile() {
     }).join("\n");
     id('display').innerHTML = postsHtml;
   }
+
+  
+/*
+async function toggleComments(postID){
+  console.log("tried toggle")
+  let element = document.getElementById(`comments-box-${postID}`);
+  if(!element.classList.contains("d-none")){
+    console.log("entered if statement")
+      element.classList.add("d-none");
+  }else{
+      console.log("entered else statement")
+      element.classList.remove("d-none");
+      let commentsElement = document.getElementById(`comments-${postID}`);
+      if(commentsElement.innerHTML == ""){ // load comments if not yet loaded
+          commentsElement.innerHTML = "loading..."
+
+          let commentsJSON = await fetchJSON(`api/${apiVersion}/comments?artID=${postID}`)
+          commentsElement.innerHTML = getCommentHTML(commentsJSON);          
+      }
+  }
+}
+*/
+
+async function refreshComments(postID){
+  console.log("Art ID=", postID);
+  let commentsElement = document.getElementById(`comments-${postID}`);
+  commentsElement.innerHTML = "loading..."
+
+  let commentsJSON = await fetchJSON(`api/${apiVersion}/comments?artID=${postID}`)
+  commentsElement.innerHTML = getCommentHTML(commentsJSON);
+}
+
+async function postComment(artID){
+  let newComment = document.getElementById(`new-comment-${artID}`).value;
+
+  let responseJson = await fetchJSON(`api/${apiVersion}/comments`, {
+      method: "POST",
+      body: {artID: artID, newComment: newComment}
+  })
+  
+  refreshComments(artID);
+}
+
+function getCommentHTML(commentsJSON){
+  console.log('comment json:', commentsJSON)
+  return commentsJSON.map(commentInfo => {
+      return `
+      <div class="individual-comment-box">
+          <div>${escapeHTML(commentInfo.comment)}</div>
+          <div> - <a href="/userInfo.html?user=${encodeURIComponent(commentInfo.username)}">${escapeHTML(commentInfo.username)}</a>, ${escapeHTML(commentInfo.created_date)}</div>
+      </div>`
+  }).join(" ");
+}
 
   /**
    * Generates an art post.
@@ -179,5 +252,5 @@ function previewFile() {
   function gen(tagName) {
     return document.createElement(tagName);
   }
-}
-)();
+//}
+//)();

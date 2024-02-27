@@ -4,13 +4,18 @@ var router = express.Router();
 
 router.get('/', async (req, res) => {
 	try {
-    let allComments = await req.models.Comment.find({'post': req.query.postID});
-		console.log(allComments);
+    let allComments = await req.models.Comment.find({'art': req.query.artID});
+		//console.log(allComments);
 		let commentData = [];
 		if (allComments) {
 			commentData = await Promise.all(
 				allComments.map(async comm => {
-					return {'id': comm._id, 'username': comm.username, 'comment': comm.comment, 'art': comm.art, 'created_date': comm.created_date};
+					return {
+					'id': comm._id, 
+					'username': comm.username, 
+					'comment': comm.comment,
+					'art': comm.art, 
+					'created_date': comm.created_date};
 				})
 			);
 		}
