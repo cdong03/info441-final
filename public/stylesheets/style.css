@@ -5,6 +5,10 @@ body {
   color: #333333;
 }
 
+.post img {
+  max-width: 500px;
+}
+
 a {
   color: #00B7FF;
 }
@@ -17,7 +21,7 @@ a {
 }
 
 h1, h3 {
-  color: purple; 
+  color: purple;
 }
 
 button:hover {

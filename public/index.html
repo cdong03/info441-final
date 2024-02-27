@@ -4,18 +4,22 @@
   <title>UW Art</title>
   <link rel="stylesheet" href="stylesheets/style.css">
   <script src="javascripts/index.js"></script>
+  <script src="javascripts/identity.js"></script>
+  <script src="javascripts/api_version.js"></script>
+  <script src="javascripts/utils.js"></script>
 </head>
 
 <body>
   <div id="header_container">
-    <button id="login-button">Login</button>
+    <div id="identity_div">loading...</div>
     <h1>UW Art</h1>
   </div>
   <div id="header_line"></div>
+  <p id="errorInfo">ERROR MSG</p>
   <form id="upload_art">
     <h3>Upload Art</h3>
     <label for="art_title">Title: </label>
-    <input name="art_title" id="art_title" maxlength="20" pattern="[a-zA-Z0-9]+" required>
+    <input name="art_title" id="art_title" maxlength="20" required>
     <br><br>
     <label for="art_url">Art URL: </label>
     <input name="art_url" id="art_url" required oninput="previewURL()">
@@ -26,7 +30,7 @@
     <img id="art_preview" src="" alt="Art Preview" style="display: none">
 
     <label for="art_alt">Alt text: </label>
-    <input name="art_alt" id="art_alt" pattern="[a-zA-Z0-9]+" required>
+    <input name="art_alt" id="art_alt" required>
     <button>Post</button>
     <div id="header_line"></div>
   </form>

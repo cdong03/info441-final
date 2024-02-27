@@ -1,4 +1,3 @@
-
 //show preview of the art when user enters a url for their art.
 function previewURL() {
   var urlInput = document.getElementById("art_url").value;
@@ -26,15 +25,15 @@ function previewFile() {
   }
 
   if (fileInput.files && fileInput.files[0]) {
-     var reader = new FileReader();
-     reader.onload = function(e) {
-     artPreview.src = e.target.result;
-     artPreview.style.display = 'block';
-     }
-     reader.readAsDataURL(fileInput.files[0]);
+    var reader = new FileReader();
+    reader.onload = function(e) {
+    artPreview.src = e.target.result;
+    artPreview.style.display = 'block';
+    }
+    reader.readAsDataURL(fileInput.files[0]);
 
   } else {
-    artPreview.src = ""; 
+    artPreview.src = "";
     artPreview.style.display = 'none';
   }
 }
@@ -42,36 +41,72 @@ function previewFile() {
 "use strict";
 (function() {
 
-  
-
   window.addEventListener("load", init);
 
   /**
    * Sets up event listeners for website's buttons.
    */
-
-  
-
-  function init() {
+  async function init() {
     id('upload_art').addEventListener('submit', (evt) => {
       evt.preventDefault();
       uploadArt();
     });
+    loadArts();
+    await loadIdentity();
   }
 
-  function uploadArt() {
-    let params = new FormData(id('upload_art'));
-    params.append('username', userID);
-    fetch('/arts/post', {method: 'POST', body: params})
-      .then(statusCheck)
-      .then(res => res.json())
-      .then((res) => {
-        id('display').innerHTML = '';
-        for (let i = 0; i < res.length; i++) {
-          id('display').appendChild(genArt(res.cars[i]));
+  async function uploadArt() {
+    let artUrl = id('art_url').value;
+    let artTitle = id('art_title').value;
+    let artAlt = id('art_alt').value;
+    //let artFile = id('art_file');
+    await fetchJSON(
+      `/api/${apiVersion}/arts/`,
+      {
+        method: 'POST',
+        body: {
+          art_url: artUrl,
+          art_title: artTitle,
+          art_alt: artAlt,
+          //art_file: artFile
         }
       })
-      .catch(handleError);
+  }
+
+  async function loadArts(){
+    id('display').innerText = "Loading...";
+    let postsJson = await fetchJSON(`api/${apiVersion}/arts`);
+
+    let postsHtml = postsJson.map(postInfo => {
+        return `
+        <div class="post">
+        <h2>${postInfo.title}</h2>
+            <div><a href="/userInfo.html?user=${encodeURIComponent(postInfo.username)}">${escapeHTML(postInfo.username)}</a>, ${escapeHTML(postInfo.created_date)}</div>
+            <img src="${postInfo.imgUrl}" alt="${postInfo.alt}" />
+            <div class="post-interactions">
+                <div>
+                    <span title="${postInfo.likes? escapeHTML(postInfo.likes.join(", ")) : ""}"> ${postInfo.likes ? `${postInfo.likes.length}` : 0} likes </span> &nbsp; &nbsp;
+                    <span class="heart-button-span ${myIdentity? "": "d-none"}">
+                        ${postInfo.likes && postInfo.likes.includes(myIdentity) ?
+                            `<button class="heart_button" onclick='unlikePost("${postInfo.id}")'>&#x2665;</button>` :
+                            `<button class="heart_button" onclick='likePost("${postInfo.id}")'>&#x2661;</button>`}
+                    </span>
+                </div>
+                <br>
+                <button onclick='toggleComments("${postInfo.id}")'>View/Hide comments</button>
+                <div id='comments-box-${postInfo.id}' class="comments-box d-none">
+                    <button onclick='refreshComments("${postInfo.id}")')>refresh comments</button>
+                    <div id='comments-${postInfo.id}'></div>
+                    <div class="new-comment-box ${myIdentity? "": "d-none"}">
+                        New Comment:
+                        <textarea type="textbox" id="new-comment-${postInfo.id}"></textarea>
+                        <button onclick='postComment("${postInfo.id}")'>Post Comment</button>
+                    </div>
+                </div>
+            </div>
+        </div>`
+    }).join("\n");
+    id('display').innerHTML = postsHtml;
   }
 
   /**
@@ -79,54 +114,34 @@ function previewFile() {
    * @param {Promise} info - Art information.
    * @returns {Object} - The displayed art.
    */
-  function genArt(info) {
-    let art = gen('div');
-    art.classList.add('art');
-    let title = gen('h2');
-    title.textContent = info.title;
-    art.appendChild(heading);
-    let user = gen('p');
-    user.textContent = info.username;
-    art.appendChild(user);
-    let img = gen('img');
-    img.src = info.imgUrl;
-    img.alt = info.alt;
-    art.appendChild(img);
-    let commentBtn = gen('button');
-    commentBtn.textContent = 'Show/hide comments';
-    commentBtn.addEventListener('click', () => {
-      toggleComments(info.id);
-    });
-    art.appendChild(commentBtn);
-    return art;
-  }
+  // function genArt(info) {
+  //   let art = gen('div');
+  //   art.classList.add('art');
+  //   let title = gen('h2');
+  //   title.textContent = info.title;
+  //   art.appendChild(title);
+  //   let user = gen('p');
+  //   user.textContent = info.username;
+  //   art.appendChild(user);
+  //   let img = gen('img');
+  //   img.src = info.imgUrl;
+  //   img.alt = info.alt;
+  //   art.appendChild(img);
+  //   let commentBtn = gen('button');
+  //   commentBtn.textContent = 'Show/hide comments';
+  //   commentBtn.addEventListener('click', () => {
+  //     toggleComments(info.id);
+  //   });
+  //   art.appendChild(commentBtn);
+  //   return art;
+  // }
 
   /**
    * Shows/hides comments for the given art.
    * @param {string} artID - ID of the given artwork.
    */
   function toggleComments(artID) {
-    // Need to review how they did this in websharer
-  }
-
-  /**
-   * Shows an error message.
-   * @param {Promise} res - Given error message.
-   */
-  function handleError(res) {
-    console.log('Error: ' + res);
-  }
-
-  /**
-   * Checks the status of the fetch request.
-   * @param {Promise} res - Given Promise.
-   * @returns {Promise} Given Promise.
-   */
-  async function statusCheck(res) {
-    if (!res.ok) {
-      throw new Error(await res.text());
-    }
-    return res;
+    // Don't know if necessary
   }
 
   /**
