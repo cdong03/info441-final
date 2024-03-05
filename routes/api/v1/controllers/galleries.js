@@ -2,11 +2,6 @@ import express from 'express';
 
 var router = express.Router();
 
-// TO-DO:
-// Add 'create gallery' form to HTML
-// Add endpoint to add/remove users from gallery
-// Rewrite below endpoints to apply to Gallery
-
 router.delete('/', async (req, res) => {
 	try {
 		if (req.session.isAuthenticated) {
@@ -27,17 +22,56 @@ router.delete('/', async (req, res) => {
 	}
 });
 
+// Add art
+router.post('/art', async (req, res) => {
+  try {
+		if (req.session.isAuthenticated) {
+			let findArt = await req.models.Art.findOne({'_id': req.body.id});
+			// Reference arts?
+			let artID = findArt.id;
+			if (artID) {
+				findGall.users.push(username);
+				await findGall.save();
+			}
+			res.send({'status': 'success'});
+		} else {
+			res.status(401).json({status: 'error', error: 'not logged in'})
+		}
+	} catch(err) {
+    console.log(err);
+		res.status(500).json({'status': 'error', 'error': err});
+	}
+});
+
+// Add user
+router.post('/user', async (req, res) => {
+  try {
+		if (req.session.isAuthenticated) {
+			let username = req.body.username;
+			let findGall = await req.models.Gallery.findOne({'_id': req.body.id});
+			if (!findGall.users.includes(username)) {
+				findGall.users.push(username);
+				await findGall.save();
+			}
+			res.send({'status': 'success'});
+		} else {
+			res.status(401).json({status: 'error', error: 'not logged in'})
+		}
+	} catch(err) {
+    console.log(err);
+		res.status(500).json({'status': 'error', 'error': err});
+	}
+});
+
 router.post('/', async (req, res) => {
   try {
 		if (req.session.isAuthenticated) {
-			const Art = new req.models.Art({
-				imgUrl: req.body.art_url,
-				title: req.body.art_title,
-        alt: req.body.art_alt,
-				username: req.session.account.username,
+			const Gallery = new req.models.Gallery({
+				title: req.body.title,
+        users: [req.session.account.username],
 				created_date: Date.now()
 			});
-			await Art.save();
+			await Gallery.save();
 			res.send({'status': 'success'});
 		} else {
 			res.status(401).json({status: 'error', error: 'not logged in'})
@@ -50,16 +84,21 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
 	try {
-		let username = req.query.username;
+		let gallery = req.query.id;
 		let allArt = '';
-		if (username) {
+		if (gallery) {
+			// find based on arts array
 			allArt = await req.models.Art.find({'username': username});
 		} else {
 			allArt = await req.models.Art.find();
 		}
 		let artData = await Promise.all(
 			allArt.map(async art => {
-				return {'imgUrl': art.imgUrl, 'title': art.imgUrl, 'username': art.username, 'likes': art.likes, 'id': art._id};
+				let userPartOf = false;
+				if (req.session.isAuthenticated && art.users.includes(req.session.account.username)) {
+					userPartOf = true;
+				}
+				return {'title': art.title, 'users': art.users, 'created_date': art.created_date, 'userPartOf': userPartOf};
 			})
 	);
 		res.send(artData);

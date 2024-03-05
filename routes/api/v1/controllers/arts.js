@@ -91,7 +91,7 @@ router.get('/', async (req, res) => {
 		}
 		let artData = await Promise.all(
 			allArt.map(async art => {
-				return {'imgUrl': art.imgUrl, 'alt': art.alt, 'title': art.title, 'username': art.username, 'likes': art.likes, 'id': art._id};
+				return {'imgUrl': art.imgUrl, 'alt': art.alt, 'title': art.title, 'created_date': art.created_date, 'username': art.username, 'likes': art.likes, 'id': art._id};
 			})
 	);
 		res.send(artData);

@@ -72,6 +72,7 @@ async function unlikePost(artID){
       uploadArt();
     });
     loadArts();
+    //loadGalleries();
     await loadIdentity();
   }
 
@@ -102,7 +103,7 @@ async function unlikePost(artID){
         return `
         <div class="post">
         <h2>${postInfo.title}</h2>
-            <div><a href="/userInfo.html?user=${encodeURIComponent(postInfo.username)}">${escapeHTML(postInfo.username)}</a>, ${escapeHTML(postInfo.created_date)}</div>
+            <div><a href="/userInfo.html?user=${encodeURIComponent(postInfo.username)}">${escapeHTML(postInfo.username)}</a>, #${postInfo.id}, ${postInfo.created_date}</div>
             <img src="${postInfo.imgUrl}" alt="${postInfo.alt}" />
             <div class="post-interactions">
                 <div>
@@ -119,7 +120,7 @@ async function unlikePost(artID){
                     <div class="new-comment-box ${myIdentity? "": "d-none"}">
                     <br></br>
                     <div class="new-comment-line">New Comment: </div>
-                        <textarea type="textbox" id="new-comment-${postInfo.id}"></textarea> 
+                        <textarea type="textbox" id="new-comment-${postInfo.id}"></textarea>
                         <button onclick='postComment("${postInfo.id}")'>Post Comment</button>
                     </div>
                 </div>
@@ -129,7 +130,90 @@ async function unlikePost(artID){
     id('display').innerHTML = postsHtml;
   }
 
-  
+  async function createGallery() {
+    let galleryTitle = id('gallery_title').value;
+    await fetchJSON(
+      `/api/${apiVersion}/galleries/`,
+      {
+        method: 'POST',
+        body: {
+          title: galleryTitle
+        }
+      })
+      loadGalleries();
+  }
+
+  async function loadGalleries() {
+    id('galleries').innerText = "Loading...";
+    let postsJson = await fetchJSON(`api/${apiVersion}/galleries`);
+
+    let postsHtml = postsJson.map(postInfo => {
+      let users = postInfo.users.join(', ');
+      if (postInfo.userPartOf) {
+        return `
+        <div class="post">
+        <h2>${postInfo.title}</h2>
+            <div>${users}, ${postInfo.created_date}</div>
+            <button onclick='loadArts("${postInfo.id}")')>Show images below</button>
+            <input name="art-${postInfo.id}" id="art-${postInfo.id}" maxlength="20">
+            <button onclick='addArtGallery("${postInfo.id}")')>Add art</button>
+            <input name="user-${postInfo.id}" id="user-${postInfo.id}">
+            <button onclick='addUserGallery("${postInfo.id}")')>Add user</button>
+            <button onclick='deleteGallery("${postInfo.id}")')>Delete gallery</button>
+        </div>`
+      } else {
+        return `
+        <div class="post">
+        <h2>${postInfo.title}</h2>
+            <div>${users}, ${postInfo.created_date}</div>
+            <button onclick='loadArts("${postInfo.id}")')>Show images below</button>
+        </div>`
+      }
+  }).join("\n");
+  id('galleries').innerHTML = postsHtml;
+  }
+
+  async function addArtGallery() {
+    // Check specifics in galleries.js
+    let galleryTitle = id('gallery_title').value;
+    await fetchJSON(
+      `/api/${apiVersion}/galleries/`,
+      {
+        method: 'POST',
+        body: {
+          title: galleryTitle
+        }
+      })
+      loadGalleries();
+  }
+
+  async function addUserGallery() {
+    let galleryTitle = id('gallery_title').value;
+    await fetchJSON(
+      `/api/${apiVersion}/galleries/`,
+      {
+        method: 'POST',
+        body: {
+          title: galleryTitle
+        }
+      })
+      loadGalleries();
+  }
+
+  async function deleteGallery() {
+    let galleryTitle = id('gallery_title').value;
+    await fetchJSON(
+      `/api/${apiVersion}/galleries/`,
+      {
+        method: 'POST',
+        body: {
+          title: galleryTitle
+        }
+      })
+      loadGalleries();
+  }
+
+
 /*
 async function toggleComments(postID){
   console.log("tried toggle")
@@ -145,7 +229,7 @@ async function toggleComments(postID){
           commentsElement.innerHTML = "loading..."
 
           let commentsJSON = await fetchJSON(`api/${apiVersion}/comments?artID=${postID}`)
-          commentsElement.innerHTML = getCommentHTML(commentsJSON);          
+          commentsElement.innerHTML = getCommentHTML(commentsJSON);
       }
   }
 }
@@ -167,7 +251,7 @@ async function postComment(artID){
       method: "POST",
       body: {artID: artID, newComment: newComment}
   })
-  
+
   refreshComments(artID);
 }
 
@@ -181,33 +265,6 @@ function getCommentHTML(commentsJSON){
       </div>`
   }).join(" ");
 }
-
-  /**
-   * Generates an art post.
-   * @param {Promise} info - Art information.
-   * @returns {Object} - The displayed art.
-   */
-  // function genArt(info) {
-  //   let art = gen('div');
-  //   art.classList.add('art');
-  //   let title = gen('h2');
-  //   title.textContent = info.title;
-  //   art.appendChild(title);
-  //   let user = gen('p');
-  //   user.textContent = info.username;
-  //   art.appendChild(user);
-  //   let img = gen('img');
-  //   img.src = info.imgUrl;
-  //   img.alt = info.alt;
-  //   art.appendChild(img);
-  //   let commentBtn = gen('button');
-  //   commentBtn.textContent = 'Show/hide comments';
-  //   commentBtn.addEventListener('click', () => {
-  //     toggleComments(info.id);
-  //   });
-  //   art.appendChild(commentBtn);
-  //   return art;
-  // }
 
   /**
    * Shows/hides comments for the given art.

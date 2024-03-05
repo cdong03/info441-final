@@ -4,13 +4,6 @@ let models = {};
 
 await mongoose.connect('mongodb+srv://UserGuy:passwordguy@cluster0.5mbj5pg.mongodb.net/final');
 
-// Unsure if necessary
-// const userSchema = new mongoose.Schema({
-// 	imgUrl: String,
-//   description: String,
-// 	created_date: Date
-// });
-
 const artSchema = new mongoose.Schema({
 	imgUrl: String,
 	alt: String,
