@@ -143,6 +143,41 @@ async function unlikePost(artID){
     id('display').innerHTML = postsHtml;
   }
 
+  async function loadGallArts(gall){
+    id('display').innerText = "Loading...";
+    let postsJson = await fetchJSON(`api/${apiVersion}/arts/gallery?gallery=` + gall);
+
+    let postsHtml = postsJson.map(postInfo => {
+        return `
+        <div class="post">
+        <h2>${postInfo.title}</h2>
+            <div><a href="/userInfo.html?user=${encodeURIComponent(postInfo.username)}">${escapeHTML(postInfo.username)}</a>, ID: ${postInfo.id}, ${postInfo.created_date}</div>
+            <img src="${postInfo.imgUrl}" alt="${postInfo.alt}" />
+            <div class="post-interactions">
+                <div>
+                    <span title="${postInfo.likes? escapeHTML(postInfo.likes.join(", ")) : ""}"> ${postInfo.likes ? `${postInfo.likes.length}` : 0} likes </span> &nbsp; &nbsp;
+                    <span class="heart-button-span ${myIdentity? "": "d-none"}">
+                        ${postInfo.likes && postInfo.likes.includes(myIdentity) ?
+                            `<button class="heart_button" onclick='unlikePost("${postInfo.id}")'>&#x2665;</button>` :
+                            `<button class="heart_button" onclick='likePost("${postInfo.id}")'>&#x2661;</button>`}
+                    </span>
+                </div>
+                <br>
+                    <button onclick='refreshComments("${postInfo.id}")')>Show comments</button>
+                    <div id='comments-${postInfo.id}'></div>
+                    <div class="new-comment-box ${myIdentity? "": "d-none"}">
+                    <br></br>
+                    <div class="new-comment-line">New Comment: </div>
+                        <textarea type="textbox" id="new-comment-${postInfo.id}"></textarea>
+                        <button onclick='postComment("${postInfo.id}")'>Post Comment</button>
+                    </div>
+                </div>
+            </div>
+        </div>`
+    }).join("\n");
+    id('display').innerHTML = postsHtml;
+  }
+
   async function loadGalleries() {
     id('galleries').innerText = "Loading...";
     let postsJson = await fetchJSON(`api/${apiVersion}/galleries`);
@@ -185,7 +220,7 @@ async function unlikePost(artID){
           title: galleryTitle
         }
       })
-      loadGalleries();
+      loadGallArts();
   }
 
   async function addUserGallery() {

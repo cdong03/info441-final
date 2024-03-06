@@ -27,10 +27,9 @@ router.post('/art', async (req, res) => {
   try {
 		if (req.session.isAuthenticated) {
 			let findArt = await req.models.Art.findOne({'_id': req.body.id});
-			// Reference arts?
 			let artID = findArt.id;
 			if (artID) {
-				findGall.users.push(username);
+				findGall.arts.push(artID);
 				await findGall.save();
 			}
 			res.send({'status': 'success'});

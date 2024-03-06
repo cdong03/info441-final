@@ -104,6 +104,23 @@ router.get('/', async (req, res) => {
 	}
 });
 
+router.get('/gallery', async (req, res) => {
+	try {
+		let gallery = req.query.gallery;
+		let arts = await req.models.Gallery.findOne({'title': gallery});
+		let allArts = [];
+		for (art in arts) {
+			let findArt = await req.models.Art.findOne({'id': art.id});
+			allArts.push({'imgUrl': findArt.imgUrl, 'alt': findArt.alt, 'title': findArt.title, 'created_date': findArt.created_date, 'username': findArt.username, 'likes': arfindArtt.likes, 'id': findArt._id});
+		}
+		let allArt = await req.models.Art.find({'username': username});
+		res.send(allArt);
+	} catch(err) {
+    console.log(err);
+		res.status(500).json({'status': 'error', 'error': err});
+	}
+});
+
 
 
 export default router;
