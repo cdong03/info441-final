@@ -72,7 +72,7 @@ async function unlikePost(artID){
       uploadArt();
     });
     loadArts();
-    //loadGalleries();
+    loadGalleries();
     await loadIdentity();
   }
 
@@ -95,6 +95,19 @@ async function unlikePost(artID){
     loadArts();
   }
 
+  async function createGallery() {
+    let galleryTitle = id('gallery_title').value;
+    await fetchJSON(
+      `/api/${apiVersion}/galleries/`,
+      {
+        method: 'POST',
+        body: {
+          title: galleryTitle
+        }
+      })
+      loadGalleries();
+  }
+
   async function loadArts(){
     id('display').innerText = "Loading...";
     let postsJson = await fetchJSON(`api/${apiVersion}/arts`);
@@ -103,7 +116,7 @@ async function unlikePost(artID){
         return `
         <div class="post">
         <h2>${postInfo.title}</h2>
-            <div><a href="/userInfo.html?user=${encodeURIComponent(postInfo.username)}">${escapeHTML(postInfo.username)}</a>, #${postInfo.id}, ${postInfo.created_date}</div>
+            <div><a href="/userInfo.html?user=${encodeURIComponent(postInfo.username)}">${escapeHTML(postInfo.username)}</a>, ID: ${postInfo.id}, ${postInfo.created_date}</div>
             <img src="${postInfo.imgUrl}" alt="${postInfo.alt}" />
             <div class="post-interactions">
                 <div>
@@ -130,25 +143,13 @@ async function unlikePost(artID){
     id('display').innerHTML = postsHtml;
   }
 
-  async function createGallery() {
-    let galleryTitle = id('gallery_title').value;
-    await fetchJSON(
-      `/api/${apiVersion}/galleries/`,
-      {
-        method: 'POST',
-        body: {
-          title: galleryTitle
-        }
-      })
-      loadGalleries();
-  }
-
   async function loadGalleries() {
     id('galleries').innerText = "Loading...";
     let postsJson = await fetchJSON(`api/${apiVersion}/galleries`);
 
     let postsHtml = postsJson.map(postInfo => {
-      let users = postInfo.users.join(', ');
+      let users = postInfo.users;
+      //users = users.join(', ');
       if (postInfo.userPartOf) {
         return `
         <div class="post">

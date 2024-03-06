@@ -66,11 +66,14 @@ router.post('/user', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
 		if (req.session.isAuthenticated) {
+			console.log('starting');
 			const Gallery = new req.models.Gallery({
 				title: req.body.title,
         users: [req.session.account.username],
+				arts: [],
 				created_date: Date.now()
 			});
+			console.log('ending');
 			await Gallery.save();
 			res.send({'status': 'success'});
 		} else {
@@ -84,18 +87,12 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
 	try {
-		let gallery = req.query.id;
-		let allArt = '';
-		if (gallery) {
-			// find based on arts array
-			allArt = await req.models.Art.find({'username': username});
-		} else {
-			allArt = await req.models.Art.find();
-		}
+		let allArt = await req.models.Gallery.find();
 		let artData = await Promise.all(
 			allArt.map(async art => {
 				let userPartOf = false;
-				if (req.session.isAuthenticated && art.users.includes(req.session.account.username)) {
+				let users = art.users
+				if (req.session.isAuthenticated && users.includes(req.session.account.username)) {
 					userPartOf = true;
 				}
 				return {'title': art.title, 'users': art.users, 'created_date': art.created_date, 'userPartOf': userPartOf};

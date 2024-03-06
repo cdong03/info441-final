@@ -1,16 +1,38 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-color: #FFFFFF;
+  background-color: #F9F1FF;
   color: #333333;
 }
 
+#display {
+  display: flex;
+  flex-wrap: wrap;
+  width: 75%;
+  align-items: center;
+}
+
 .post img {
-  max-width: 500px;
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.post {
+  display: flex;
+  flex-direction: column;
+  width: 45%;
+  background-color: #E5D5F1;
+  outline-style: solid;
+  outline-width: 3px;
+  outline-color: purple;
+  align-items: center;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 15px;
 }
 
 a {
-  color: #00B7FF;
+  color: purple;
 }
 
 #art_preview {
@@ -49,7 +71,7 @@ button:hover {
   top: 0;
   right: 0;
   left: 0;
-  background-color: gold;
+  background-color: #D4B7EA;
   padding: 3px;
   margin-bottom: 10px;
 }
