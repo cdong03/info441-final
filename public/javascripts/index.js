@@ -114,6 +114,7 @@ async function unlikePost(artID){
           title: galleryTitle
         }
       })
+      id('gallery_title').value = '';
       loadGalleries();
   }
 
@@ -166,6 +167,8 @@ async function unlikePost(artID){
 
   async function loadGalleries() {
     id('galleries').innerText = "Loading...";
+
+    let uniqueUsernames = await fetchUniqueUsernames();
     let postsJson = await fetchJSON(`api/${apiVersion}/galleries`);
 
     let postsHtml = postsJson.map(postInfo => {
@@ -181,11 +184,17 @@ async function unlikePost(artID){
             <p>Art Name:</p>
             <input name="art-${postInfo.id}" id="art-${postInfo.id}" maxlength="20">
             <p>Art Username:</p>
-            <input name="artuser-${postInfo.id}" id="artuser-${postInfo.id}" maxlength="20">
+            <select name="artuser-${postInfo.id}" id="artuser-${postInfo.id}">
+            <option value="">Select Art User</option>
+            ${uniqueUsernames.map(username => `<option value="${username}">${username}</option>`)}
+            </select>
             <br></br>
             <button onclick='addArtGallery("${postInfo.id}")')>Add art to gallery</button>
             <p>Username:</p>
-            <input name="user-${postInfo.id}" id="user-${postInfo.id}">
+            <select name="user-${postInfo.id}" id="user-${postInfo.id}">
+            <option value="">Select User</option>
+            ${uniqueUsernames.map(username => `<option value="${username}">${username}</option>`)}
+            </select>
             <br></br>
             <button onclick='addUserGallery("${postInfo.id}")')>Add user to gallery</button>
             <br></br>
@@ -204,6 +213,14 @@ async function unlikePost(artID){
   id('galleries').innerHTML = postsHtml;
   }
 
+  async function fetchUniqueUsernames() {
+    let response = await fetch(`/api/${apiVersion}/arts`)
+    let arts = await response.json();
+    let usernameSet = new Set(arts.map(art => art.username));
+    let uniqueUsernames = [...usernameSet];
+    return uniqueUsernames;
+  }
+
   async function addArtGallery(gallID) {
     let title = id('art-' + gallID).value;
     let username = id('artuser-' + gallID).value;
@@ -218,6 +235,7 @@ async function unlikePost(artID){
         }
       })
       loadGalleries();
+      //loadGallArts(gallID);
   }
 
   async function addUserGallery(gallID) {

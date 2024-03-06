@@ -49,3 +49,4 @@ async function deleteArt(artID){
     })
     loadUserInfo();
 }
+
