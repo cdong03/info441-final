@@ -9,11 +9,13 @@ h1 {
   text-align: center;
 }
 
-#display {
+#display, #galleries {
   display: flex;
   flex-wrap: wrap;
   width: 75%;
   align-items: center;
+  margin: 0 auto;
+  justify-content: space-between;
 }
 
 .post img {

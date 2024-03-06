@@ -122,13 +122,14 @@ async function unlikePost(artID){
     let postsJson = await fetchJSON(`api/${apiVersion}/arts`);
 
     displayArts(postsJson);
+    id('current_gallery').innerText = 'All Art';
   }
 
   async function loadGallArts(gall){
     id('display').innerText = "Loading...";
     let postsJson = await fetchJSON(`api/${apiVersion}/arts/gallery?gallery=` + gall);
-
     displayArts(postsJson);
+    id('current_gallery').innerText = gall;
   }
 
   async function displayArts(postsJson) {
@@ -174,24 +175,29 @@ async function unlikePost(artID){
         return `
         <div class="post">
         <h2>${postInfo.title}</h2>
-            <div>${users}</div>
-            <button onclick='loadGallArts("${postInfo.title}")')>Show images below</button>
+            <div>[${users}]</div>
+            <br></br>
+            <button onclick='loadGallArts("${postInfo.title}")')>Show gallery below</button>
             <p>Art Name:</p>
             <input name="art-${postInfo.id}" id="art-${postInfo.id}" maxlength="20">
             <p>Art Username:</p>
             <input name="artuser-${postInfo.id}" id="artuser-${postInfo.id}" maxlength="20">
-            <button onclick='addArtGallery("${postInfo.id}")')>Add art</button>
+            <br></br>
+            <button onclick='addArtGallery("${postInfo.id}")')>Add art to gallery</button>
             <p>Username:</p>
             <input name="user-${postInfo.id}" id="user-${postInfo.id}">
-            <button onclick='addUserGallery("${postInfo.id}")')>Add user</button>
+            <br></br>
+            <button onclick='addUserGallery("${postInfo.id}")')>Add user to gallery</button>
+            <br></br>
             <button onclick='deleteGallery("${postInfo.id}")')>Delete gallery</button>
         </div>`
       } else {
         return `
         <div class="post">
         <h2>${postInfo.title}</h2>
-            <div>${users}, ${postInfo.created_date}</div>
-            <button onclick='loadGallArts("${postInfo.title}")')>Show images below</button>
+            <div>[${users}]</div>
+            <br></br>
+            <button onclick='loadGallArts("${postInfo.title}")')>Show gallery below</button>
         </div>`
       }
   }).join("\n");
