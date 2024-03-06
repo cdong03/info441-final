@@ -5,6 +5,10 @@ body {
   color: #333333;
 }
 
+h1 {
+  text-align: center;
+}
+
 #display {
   display: flex;
   flex-wrap: wrap;
