@@ -4,16 +4,16 @@ function previewURL() {
   var preview = document.getElementById("art_preview");
   var fileInput = document.getElementById("art_file");
 
-  //clear the file input value when a url is entered (users can only pick one or the other)
+  /*clear the file input value when a url is entered (users can only pick one or the other)
   if (urlInput && urlInput.trim() !== "") {
     fileInput.value = "";
-  }
+  }*/
 
   preview.src = urlInput;
   preview.style.display = "block";
 }
 
-//show preview of the art when a user chooses a local file of their art
+/*show preview of the art when a user chooses a local file of their art
 function previewFile() {
   var fileInput = document.getElementById('art_file');
   var artPreview = document.getElementById('art_preview');
@@ -36,7 +36,7 @@ function previewFile() {
     artPreview.src = "";
     artPreview.style.display = 'none';
   }
-}
+}*/
 
 async function likePost(artID){
   await fetchJSON(`api/${apiVersion}/arts/like`, {
@@ -96,6 +96,11 @@ async function unlikePost(artID){
           //art_file: artFile
         }
       })
+
+    id('art_url').value = '';
+    id('art_title').value = '';
+    id('art_alt').value = '';
+    id('art_preview').src = '';
     loadArts();
   }
 
