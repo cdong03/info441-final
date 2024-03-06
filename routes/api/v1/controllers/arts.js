@@ -41,22 +41,25 @@ router.post('/unlike', async (req, res) => {
 
 router.delete('/', async (req, res) => {
 	try {
-		if (req.session.isAuthenticated) {
-			let artID = req.body.artID;
-			let findArt = await req.models.Art.findOne({'_id': artID});
-			if (findArt.username !== req.session.account.username) {
-				res.status(401).json({status: 'error', error: 'you can only delete your own art'});
-			}
-			await req.models.Comment.deleteMany({'art': artID});
-			await req.models.Art.deleteOne({'_id': artID});
-			res.send({'status': 'success'});
-		} else {
-			res.status(401).json({status: 'error', error: 'not logged in'})
-		}
-	} catch(err) {
-    console.log(err);
-		res.status(500).json({'status': 'error', 'error': err});
-	}
+        if (req.session.isAuthenticated == false) {
+            return res.status(401).json({ 'status': 'error', 'error': 'not logged in' })
+        } else {
+            let art = await req.models.Art.findById(req.body.artID)
+
+            if (art.username !== req.session.account.username) {
+                return res.status(401).json({ 'status': 'error', 'error': 'you can only delete your own art' })
+            }
+
+            await req.models.Comment.deleteMany({ art: art._id })
+
+            await req.models.Art.deleteOne({ _id: art._id })
+
+            return res.json({ 'status': 'success' })
+        }
+    } catch (error) {
+        console.error('Error deleting art:', error)
+        res.status(500).json({ 'status': 'error', 'error': error.message })
+    }
 });
 
 router.post('/', async (req, res) => {
@@ -100,5 +103,7 @@ router.get('/', async (req, res) => {
 		res.status(500).json({'status': 'error', 'error': err});
 	}
 });
+
+
 
 export default router;
