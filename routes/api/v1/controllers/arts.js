@@ -111,7 +111,9 @@ router.get('/gallery', async (req, res) => {
 		let allArts = [];
 		for (let art of gall.arts) {
 			let findArt = await req.models.Art.findOne({'_id': art});
-			allArts.push({'imgUrl': findArt.imgUrl, 'alt': findArt.alt, 'title': findArt.title, 'created_date': findArt.created_date, 'username': findArt.username, 'likes': findArt.likes, 'id': findArt._id});
+			if (findArt) {
+				allArts.push({'imgUrl': findArt.imgUrl, 'alt': findArt.alt, 'title': findArt.title, 'created_date': findArt.created_date, 'username': findArt.username, 'likes': findArt.likes, 'id': findArt._id});
+			}
 		}
 		res.send(allArts);
 	} catch(err) {
