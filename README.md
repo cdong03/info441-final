@@ -1,6 +1,8 @@
 # Info 441 Final Project Proposal
 ## Project Description
 
+Link: https://www.websharer-parker.me/
+
 Our application is an art-sharing platform where users can post their art and comment on other people’s art. Users can also make public and private galleries of art.
 
 Our target audience is artists of a young age who enjoy communicating about their shared hobby. While older artists may sell their art privately, younger artists–inexperienced ones in particular–draw primarily for fun and may post their art without care of who sees it. Teenagers and young adults may enjoy forming groups where they post similar artworks as fanart.
@@ -29,6 +31,8 @@ As developers we want to build this application for young artists no different f
 
 ### Endpoints
 
+![endpoints](https://i.imgur.com/kgBrV30.png)
+
 * GET /art/{id}
     * Gets information about specified artwork.
 * GET /user/{id}
@@ -54,7 +58,6 @@ As developers we want to build this application for young artists no different f
 
 ### Database Schemas
 
-User: Name, description, profile picture, galleries, artworks, liked artworks\
-Art: Users who liked it, amount of likes, img url, img alt text, title, comments, artist, galleries\
-Comment: User, comment text, art\
-Gallery: Users allowed to add to gallery, artworks
+Art: Image URL, alt text, title, artist username, likes, date created\
+Comment: Username, comment text, art, date created\
+Gallery: Title, users allowed to edit, artworks, date created
